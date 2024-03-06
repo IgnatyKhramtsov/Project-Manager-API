@@ -1,0 +1,58 @@
+version: "3.8"
+services:
+  db:
+    image: postgres:16
+    container_name: db_app
+    restart: always
+#    volumes:
+#       - /var/lib/postgresql/pmapi
+    command:
+      -p 1221
+    expose:
+      - 1221
+    env_file:
+      - .env_non_dev
+    networks:
+      - custom
+
+  app:
+    build:
+      context: .
+    restart: always
+    env_file:
+      - .env_non_dev
+    container_name: fastapi_app
+    command: ["/fastapi_app/docker/app.sh"]
+    ports:
+      - 8001:8000
+    depends_on:
+      - db
+    networks:
+      - custom
+
+networks:
+  custom:
+    driver: bridge
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
