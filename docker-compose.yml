@@ -3,9 +3,11 @@ services:
   db:
     image: postgres:16
     container_name: db_app
-    restart: always
-#    volumes:
-#       - /var/lib/postgresql/pmapi
+    healthcheck:
+      test: pg_isready -h db -p 1221
+      interval: 5s
+      timeout: 10s
+      retries: 3
     command:
       -p 1221
     expose:
@@ -18,7 +20,6 @@ services:
   app:
     build:
       context: .
-    restart: always
     env_file:
       - .env_non_dev
     container_name: fastapi_app
@@ -26,7 +27,8 @@ services:
     ports:
       - 8001:8000
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - custom
 
